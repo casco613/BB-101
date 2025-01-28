@@ -1,3 +1,12 @@
+---
+name: Reporte de Bug
+about: Describe un problema que has encontrado en el sistema
+title: "[Bug] "
+labels: bug
+assignees: ''
+
+---
+
 ### **Descripción del problema**
 _Proporcione una descripción clara y concisa del problema._
 
