@@ -1,12 +1,20 @@
 #include "bb101.h" 
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdarg.h>
 
 typedef char* string;
 
-string obtener_texto(const string msg){
-    puts(msg);
+string obtener_texto(const string msg, ...){
+
+    va_list ap;
+    va_start(ap, msg);
+    if (msg != NULL){
+        vprintf(msg, ap);
+    }
+    
     char buffer[100];
     if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
         return NULL; 
