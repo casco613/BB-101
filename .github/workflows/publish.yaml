@@ -21,17 +21,26 @@ jobs:
 
       - name: Create tar.gz file
         run: |
-          tar -czf releases/bb101-linux.tar.gz lib/
+          tar -czf releases/bb101-linux.tar.gz -C lib/ .
 
       - name: Create tar.bz2 file
         run: |
-          tar -cjf releases/bb101-linux.tar.bz2 lib/
+          tar -cjf releases/bb101-linux.tar.bz2 -C lib/ .
 
-      - name: Upload artifact
+      - name: Upload bb101-linux.tar.gz
         uses: actions/upload-artifact@v4
         with:
           retention-days: 5
-          path: releases/*.*
+          name: bb101-linux-tar-gz
+          path: releases/bb101-linux.tar.gz
+
+      - name: Upload bb101-linux.tar.bz2
+        uses: actions/upload-artifact@v4
+        with:
+          retention-days: 5
+          name: bb101-linux-tar-bz2
+          path: releases/bb101-linux.tar.bz2
+
       - name: Clean
         run: make clean
 
@@ -52,25 +61,73 @@ jobs:
 
       - name: Create tar.gz file
         run: |
-          tar -czf releases/bb101-mac.tar.gz lib/
+          tar -czf releases/bb101-mac.tar.gz l-C ib/ .
 
       - name: Create tar.bz2 file
         run: |
-          tar -cjf releases/bb101-mac.tar.bz2 lib/
+          tar -cjf releases/bb101-mac.tar.bz2 -C lib/ .
 
-      - name: Upload artifact
+      - name: Upload bb101-mac.tar.gz
         uses: actions/upload-artifact@v4
         with:
           retention-days: 5
-          path: releases/*.*
+          name: bb101-linux-tar-gz
+          path: releases/bb101-mac.tar.gz
+
+      - name: Upload bb101-mac.tar.bz2
+        uses: actions/upload-artifact@v4
+        with:
+          retention-days: 5
+          name: bb101-linux-tar-bz2
+          path: releases/bb101-mac.tar.bz2
+
       - name: Clean
         run: make clean
-  
+
+  windows:
+    runs-on: windows-latest
+    name: Windows build
+    permissions: write-all
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Chocolatey
+        shell: pwsh
+        run: |
+          Set-ExecutionPolicy Bypass -Scope Process -Force; 
+          iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+
+      - name: Install make using Chocolatey
+        shell: pwsh
+        run: choco install make
+
+      - name: Verify make installation
+        shell: pwsh
+        run: make --version
+      
+      - name: Create zip file
+        shell: pwsh
+        run: |
+          Compress-Archive -Path 'lib\*' -DestinationPath 'releases\bb101-win.zip'
+
+      
+      - name: Upload bb101-win.zip
+        uses: actions/upload-artifact@v4
+        with:
+          retention-days: 5
+          name: bb101-win.zip
+          path: releases/bb101-win.zip
+
+      - name: Clean
+        run: make clean
+
   release:
     name: release
     permissions: write-all
     runs-on: ubuntu-latest
-    needs: [linux, mac]
+    needs: [linux, mac, windows]
 
     steps:
       - name: Download artifact
@@ -79,13 +136,13 @@ jobs:
       - name: Release
         uses: marvinpinto/action-automatic-releases@master
         with:
-          repo_token: '${{ secrets.DEPLOY_KEY }}'
+          repo_token: "${{ secrets.DEPLOY_KEY }}"
           automatic_release_tag: ${{ needs.build-data.outputs.version }}
           prerelease: false
-          title: 'Release build - ${{ needs.build-data.outputs.version }} (${{ needs.build-data.outputs.build_date }})'
+          title: "Release build - ${{ needs.build-data.outputs.version }} (${{ needs.build-data.outputs.build_date }})"
           files: |
             bb101-mac.tar.bz2
             bb101-mac.tar.gz
             bb101-linux.tar.bz2
             bb101-linux.tar.gz
-
+            bb101-win.zip
