@@ -1,4 +1,4 @@
-export LD_LIBRARY_PATH=.:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=./lib:$LD_LIBRARY_PATH
 
 CC      := gcc
 CFLAGS  := -Wall -Wextra -I./src
@@ -8,6 +8,8 @@ ARFLAGS := rcs
 SRC_DIR   := src
 BUILD_DIR := build
 TEST_DIR  := test
+LIB_DIR   := lib
+RELEASE_DIR := releases
 
 SRC_FILES := $(wildcard $(SRC_DIR)/*.c)
 STATIC_OBJ_FILES := $(patsubst $(SRC_DIR)/%.c, $(BUILD_DIR)/%.o, $(SRC_FILES))
@@ -15,17 +17,17 @@ SHARED_OBJ_FILES := $(patsubst $(SRC_DIR)/%.c, $(BUILD_DIR)/%.shared.o, $(SRC_FI
 
 # Determine OS to set dynamic library file name
 ifeq ($(OS),Windows_NT)
-    SHARED_LIB = bb101.dll
+    SHARED_LIB = lib/bb101.dll
 else
     UNAME_S := $(shell uname -s)
     ifeq ($(UNAME_S),Darwin)
-        SHARED_LIB = libbb101.dylib
+        SHARED_LIB =lib/libbb101.dylib
     else
-        SHARED_LIB = libbb101.so
+        SHARED_LIB = lib/libbb101.so
     endif
 endif
 
-LIB = libbb101.a
+LIB = lib/libbb101.a
 
 # Default target builds both static and dynamic libraries.
 all: static dynamic
@@ -34,13 +36,19 @@ all: static dynamic
 $(BUILD_DIR):
 	mkdir -p $(BUILD_DIR)
 
+$(LIB_DIR):
+	mkdir -p $(LIB_DIR)
+
+$(RELEASE_DIR):
+	mkdir -p $(RELEASE_DIR)
+
 # --- Static Library Build ---
 # Compile source files to object files (for static library).
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c | $(BUILD_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 # Archive object files into a static library.
-static: $(LIB)
+static: $(LIB_DIR) $(LIB) $(RELEASE_DIR)
 $(LIB): $(STATIC_OBJ_FILES)
 	$(AR) $(ARFLAGS) $@ $^
 
@@ -50,18 +58,18 @@ $(BUILD_DIR)/%.shared.o: $(SRC_DIR)/%.c | $(BUILD_DIR)
 	$(CC) $(CFLAGS) -fPIC -c $< -o $@
 
 # Link the shared object files into a dynamic library.
-dynamic: $(SHARED_LIB)
+dynamic: $(LIB_DIR) $(SHARED_LIB) $(RELEASE_DIR)
 $(SHARED_LIB): $(SHARED_OBJ_FILES)
 	$(CC) -shared -o $@ $^
 
 # --- Test Target ---
 # Build and run the test executable using the dynamic library.
 test: dynamic
-	$(CC) $(CFLAGS) $(TEST_DIR)/ejemplo.c -L. -lbb101 -o test_library
+	$(CC) $(CFLAGS) $(TEST_DIR)/ejemplo.c -L$(LIB_DIR) -lbb101 -o test_library
 	./test_library
 
 # --- Clean ---
 clean:
-	rm -rf $(BUILD_DIR) $(LIB) $(SHARED_LIB) test_my_library
+	rm -rf $(BUILD_DIR) $(LIB) $(SHARED_LIB) $(LIB_DIR) $(RELEASE_DIR) test_library
 
 .PHONY: all static dynamic test clean
