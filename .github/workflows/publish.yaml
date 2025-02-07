@@ -61,7 +61,7 @@ jobs:
 
       - name: Create tar.gz file
         run: |
-          tar -czf releases/bb101-mac.tar.gz l-C ib/ .
+          tar -czf releases/bb101-mac.tar.gz l-C lib/ .
 
       - name: Create tar.bz2 file
         run: |
@@ -107,6 +107,12 @@ jobs:
         shell: pwsh
         run: make --version
       
+      - name: Build static library
+        run: make static
+
+      - name: Build dynamic library
+        run: make dynamic
+
       - name: Create zip file
         shell: pwsh
         run: |
