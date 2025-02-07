@@ -6,6 +6,25 @@ on:
       - released
 
 jobs:
+  build-data:
+    permissions:
+      contents: write
+    name: Generate build data
+    runs-on: ubuntu-latest
+    outputs:
+      build_date: ${{ steps.data.outputs.builddate }}
+      version: ${{ steps.data.outputs.version }}
+      build_time: ${{ steps.data.outputs.buildtime }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Export release date
+        id: data
+        shell: bash
+        run: |
+          echo "builddate=$(date +"%Y-%m-%d")" >> $GITHUB_OUTPUT
+          echo "version=$(git describe --tags --abbrev=0)" >> $GITHUB_OUTPUT
+
   linux:
     name: Linux build
     runs-on: ubuntu-latest
@@ -108,7 +127,7 @@ jobs:
       - name: Verify make installation
         shell: pwsh
         run: make --version
-      
+
       - name: Build static library
         run: make static
 
@@ -119,7 +138,7 @@ jobs:
         shell: pwsh
         run: |
           Compress-Archive -Path 'lib\*' -DestinationPath 'releases\bb101-win.zip'
-      
+
       - name: Upload bb101-win.zip
         uses: actions/upload-artifact@v4
         with:
