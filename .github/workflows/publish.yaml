@@ -1,7 +1,9 @@
 name: Build and release
 
 on:
-  workflow_dispatch:
+  release:
+    types:
+      - released
 
 jobs:
   linux:
