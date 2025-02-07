@@ -142,7 +142,7 @@ jobs:
       - name: Release
         uses: marvinpinto/action-automatic-releases@master
         with:
-          repo_token: "${{ secrets.DEPLOY_KEY }}"
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
           automatic_release_tag: ${{ needs.build-data.outputs.version }}
           prerelease: false
           title: "Release build - ${{ needs.build-data.outputs.version }} (${{ needs.build-data.outputs.build_date }})"
