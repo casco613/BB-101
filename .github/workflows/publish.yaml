@@ -71,14 +71,14 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           retention-days: 5
-          name: bb101-linux-tar-gz
+          name: bb101-mac-tar-gz
           path: releases/bb101-mac.tar.gz
 
       - name: Upload bb101-mac.tar.bz2
         uses: actions/upload-artifact@v4
         with:
           retention-days: 5
-          name: bb101-linux-tar-bz2
+          name: bb101-mac-tar-bz2
           path: releases/bb101-mac.tar.bz2
 
       - name: Clean
