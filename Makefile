@@ -1,5 +1,3 @@
-export LD_LIBRARY_PATH=./lib:$LD_LIBRARY_PATH
-
 CC      := gcc
 CFLAGS  := -Wall -Wextra -I./src
 AR      := ar
@@ -67,6 +65,23 @@ $(SHARED_LIB): $(SHARED_OBJ_FILES)
 test: dynamic
 	$(CC) $(CFLAGS) $(TEST_DIR)/ejemplo.c -L$(LIB_DIR) -lbb101 -o test_library
 	./test_library
+
+# --- Install Target ---
+install: 
+ifeq ($(OS),Windows_NT)
+	@echo "Installing to C:\Program Files\YourLibrary"
+	mkdir -p "C:\Program Files\YourLibrary"
+	cp $(SHARED_LIB) "C:\Program Files\YourLibrary"
+else
+	UNAME_S := $(shell uname -s)
+	ifeq ($(UNAME_S),Darwin)
+		@echo "Installing to /usr/local/lib"
+		sudo cp $(SHARED_LIB) /usr/local/lib
+	else
+		@echo "Installing to /usr/lib"
+		sudo cp $(SHARED_LIB) /usr/lib
+	endif
+endif
 
 # --- Clean ---
 clean:
