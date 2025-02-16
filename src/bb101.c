@@ -253,6 +253,40 @@ int obtener_entero_positivo(const string mensaje, ...)
   return resultado;
 }
 
+float obtener_decimal(const string mensaje, ...)
+{
+  va_list lista_argumentos;
+  va_start(lista_argumentos, mensaje);
+  float resultado;
+  while (true)
+  {
+    // Se obtiene una línea de texto, utilizando la función que se encarga de
+    // gestionar la entrada y el mensaje (y sus argumentos variables).
+    string linea = obtener_texto(&lista_argumentos, mensaje);
+    if (linea == NULL)
+    {
+      // Si no se pudo leer la línea, se retorna FLT_MAX para indicar fallo.
+      resultado = FLT_MAX;
+      break;
+    }
+
+    // Se intenta extraer exactamente un número de punto flotante de la línea.
+    // El espacio en el formato " %f %c" descarta los espacios en blanco.
+    float primer;
+    char extra;
+    if (sscanf(linea, " %f %c", &primer, &extra) == 1)
+    {
+      resultado = primer;
+      break;
+    }
+    // Si no se obtuvo exactamente un número de punto flotante, se repite el
+    // ciclo para volver a pedir el ingreso al usuario.
+  }
+
+  va_end(lista_argumentos);
+  return resultado;
+}
+
 static void desmantelamiento(void)
 {
   if (strings_generados != NULL)
