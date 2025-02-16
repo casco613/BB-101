@@ -4,6 +4,6 @@
 
 int main()
 {
-    double hola = obtener_decimal_grande("Dame un texto %d: ",1);
-    printf("El numero es: %f\n", hola);
+    long hola = obtener_entero_largo("Dame un texto %d: ",1);
+    printf("El numero es: %ld\n", hola);
 }

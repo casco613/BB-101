@@ -322,6 +322,40 @@ double obtener_decimal_grande(const string mensaje, ...)
   return resultado;
 }
 
+long obtener_entero_largo(const string mensaje, ...)
+{
+  va_list lista_argumentos;
+  va_start(lista_argumentos, mensaje);
+  long resultado;
+  while (true)
+  {
+    // Se obtiene una línea de texto, utilizando la función que se encarga de
+    // gestionar la entrada y el mensaje (y sus argumentos variables).
+    string linea = obtener_texto(&lista_argumentos, mensaje);
+    if (linea == NULL)
+    {
+      // Si no se pudo leer la línea, se retorna LONG_MAX para indicar fallo.
+      resultado = LONG_MAX;
+      break;
+    }
+
+    // Se intenta extraer exactamente un entero largo de la línea.
+    // El espacio en el formato " %ld %c" descarta los espacios en blanco.
+    long primer;
+    char extra;
+    if (sscanf(linea, " %ld %c", &primer, &extra) == 1)
+    {
+      resultado = primer;
+      break;
+    }
+    // Si no se obtuvo exactamente un entero largo, se repite el ciclo para
+    // volver a pedir el ingreso al usuario.
+  }
+
+  va_end(lista_argumentos);
+  return resultado;
+}
+
 static void desmantelamiento(void)
 {
   if (strings_generados != NULL)
