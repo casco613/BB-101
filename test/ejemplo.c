@@ -4,6 +4,6 @@
 
 int main()
 {
-    int hola = obtener_entero("Dame un texto %d: ",1);
+    int hola = obtener_entero_positivo("Dame un texto %d: ",1);
     printf("El entero es: %d\n", hola);
 }

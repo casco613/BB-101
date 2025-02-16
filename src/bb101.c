@@ -234,6 +234,25 @@ int obtener_entero(va_list *argumentos, const string mensaje, ...)
   return resultado;
 }
 
+int obtener_entero_positivo(const string mensaje, ...)
+{
+  va_list lista_argumentos;
+  va_start(lista_argumentos, mensaje);
+  int resultado;
+  while (true)
+  {
+    int entero = obtener_entero(&lista_argumentos, mensaje);
+    if (entero >= 0)
+    {
+      resultado = entero;
+      break;
+    }
+  }
+
+  va_end(lista_argumentos);
+  return resultado;
+}
+
 static void desmantelamiento(void)
 {
   if (strings_generados != NULL)
