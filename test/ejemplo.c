@@ -3,6 +3,6 @@
 
 int main()
 {
-    string hola = obtener_texto("Dame un texto: ");
-    printf("%s\n",hola);
+    char hola = obtener_caracter("Dame un texto %d: ",1);
+    printf("%c\n",hola);
 }

@@ -10,7 +10,8 @@ typedef char *string;
 
 int obtener_entero(const string mensaje);
 int obtener_entero_positivo(const string mensaje);
-char obtener_caracter(const string mensaje);
+char obtener_caracter(const string mensaje, ...)
+    __attribute__((format(printf, 1, 2)));
 float obtener_decimal(const string mensaje);
 double obtener_decimal_grande(const string mensaje);
 
