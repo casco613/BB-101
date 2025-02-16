@@ -1,9 +1,12 @@
-#include "bb101.h"
+#include <bb101.h>
 #include <stdbool.h>
 #include <stdio.h>
 
 int main()
 {
-    long long hola = obtener_entero_muy_largo("Dame un texto %d: ",1);
-    printf("El numero es: %lld\n", hola);
+    string nombre = obtener_texto("Dime tu nombre: ");
+    printf("%s\n", nombre);
+    int edad = obtener_entero("Mi edad es: ");
+    long long dinero = obtener_entero_muy_largo("Dime que tengo ahorrado a mis %d: ", edad);
+    printf("%lld\n", dinero);
 }

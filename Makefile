@@ -1,5 +1,3 @@
-export LD_LIBRARY_PATH=./lib:$LD_LIBRARY_PATH
-
 CC      := gcc
 CFLAGS  := -Wall -Wextra -I./src
 AR      := ar
@@ -62,10 +60,27 @@ dynamic: $(LIB_DIR) $(SHARED_LIB) $(RELEASE_DIR)
 $(SHARED_LIB): $(SHARED_OBJ_FILES)
 	$(CC) -shared -o $@ $^
 
+# --- Install and Uninstall ---
+install: $(SHARED_LIB)
+ifeq ($(OS),Windows_NT)
+	copy $(SHARED_LIB) C:\Windows\System32
+else
+	install -m 755 $(SHARED_LIB) /usr/local/lib
+	ldconfig
+endif
+
+uninstall:
+ifeq ($(OS),Windows_NT)
+	del C:\Windows\System32\bb101.dll
+else
+	rm -f /usr/local/lib/libbb101.dylib
+	rm -f /usr/local/lib/libbb101.so
+endif
+
 # --- Test Target ---
-# Build and run the test executable using the dynamic library.
+# Build and run the test executable using the global dynamic library.
 test: dynamic
-	$(CC) $(CFLAGS) $(TEST_DIR)/ejemplo.c -L$(LIB_DIR) -lbb101 -o test_library
+	$(CC) $(CFLAGS) $(TEST_DIR)/ejemplo.c -L/usr/local/lib -lbb101 -o test_library
 	./test_library
 
 # --- Clean ---
