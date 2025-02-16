@@ -108,9 +108,14 @@ string obtener_texto(va_list *argumentos, const string mensaje, ...) {
   return string_capturado;
 }
 
-char obtener_caracter(const string mensaje, ...) {
+#undef obtener_caracter
+char obtener_caracter(va_list *argumentos, const string mensaje, ...) {
   va_list lista_argumentos;
-  va_start(lista_argumentos, mensaje);
+  if (argumentos == NULL) {
+    va_start(lista_argumentos, mensaje);
+  } else {
+    va_copy(lista_argumentos, *argumentos);
+  }
 
   char resultado;
 
@@ -139,6 +144,23 @@ char obtener_caracter(const string mensaje, ...) {
   return resultado;
 }
 
+bool preguntar_si_no(const string mensaje, ...) {
+  va_list lista_argumentos;
+  va_start(lista_argumentos, mensaje);
+  bool respuesta;
+  while (true) {
+    char caracter = obtener_caracter(&lista_argumentos, mensaje);
+
+    if (caracter == 's' || caracter == 'S')
+      respuesta = true;
+    if (caracter == 'n' || caracter == 'N')
+      respuesta = false;
+  }
+
+  va_end(lista_argumentos);
+  return respuesta;
+}
+
 static void desmantelamiento(void) {
   if (strings_generados != NULL) {
     for (size_t i = 0; i < numero_asignaciones; i++) {
@@ -149,7 +171,6 @@ static void desmantelamiento(void) {
 }
 
 // Función de inicialización.
-// Dependiendo del compilador, se puede utilizar un atributo constructor.
 int INITIALIZER(int setup) {
   setvbuf(stdout, NULL, _IONBF, 0);
   atexit(desmantelamiento);

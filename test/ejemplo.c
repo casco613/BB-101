@@ -1,8 +1,13 @@
 #include "bb101.h"
+#include <stdbool.h>
 #include <stdio.h>
 
 int main()
 {
-    char hola = obtener_caracter("Dame un texto %d: ",1);
-    printf("%c\n",hola);
+    bool hola = preguntar_si_no("Dame un texto %d: ",1);
+    if(hola){
+	printf("%s", "SI");
+    }else {
+	printf("%s", "NO");
+    }
 }
