@@ -4,6 +4,6 @@
 
 int main()
 {
-    long hola = obtener_entero_largo("Dame un texto %d: ",1);
-    printf("El numero es: %ld\n", hola);
+    long long hola = obtener_entero_muy_largo("Dame un texto %d: ",1);
+    printf("El numero es: %lld\n", hola);
 }

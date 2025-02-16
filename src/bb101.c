@@ -356,6 +356,40 @@ long obtener_entero_largo(const string mensaje, ...)
   return resultado;
 }
 
+long long obtener_entero_muy_largo(const string mensaje, ...)
+{
+  va_list lista_argumentos;
+  va_start(lista_argumentos, mensaje);
+  long long resultado;
+  while (true)
+  {
+    // Se obtiene una línea de texto, utilizando la función que se encarga de
+    // gestionar la entrada y el mensaje (y sus argumentos variables).
+    string linea = obtener_texto(&lista_argumentos, mensaje);
+    if (linea == NULL)
+    {
+      // Si no se pudo leer la línea, se retorna LLONG_MAX para indicar fallo.
+      resultado = LLONG_MAX;
+      break;
+    }
+
+    // Se intenta extraer exactamente un entero muy largo de la línea.
+    // El espacio en el formato " %lld %c" descarta los espacios en blanco.
+    long long primer;
+    char extra;
+    if (sscanf(linea, " %lld %c", &primer, &extra) == 1)
+    {
+      resultado = primer;
+      break;
+    }
+    // Si no se obtuvo exactamente un entero muy largo, se repite el ciclo para
+    // volver a pedir el ingreso al usuario.
+  }
+
+  va_end(lista_argumentos);
+  return resultado;
+}
+
 static void desmantelamiento(void)
 {
   if (strings_generados != NULL)

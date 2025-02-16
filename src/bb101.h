@@ -74,6 +74,16 @@ long obtener_entero_largo(const string mensaje, ...)
     __attribute__((format(printf, 1, 2)));
 
 /**
+ * @brief Obtiene un entero muy largo del usuario.
+ *
+ * @param mensaje El mensaje para mostrar al usuario.
+ * @param ... Argumentos adicionales para el formato del mensaje.
+ * @return El entero muy largo ingresado por el usuario.
+ */
+long long obtener_entero_muy_largo(const string mensaje, ...)
+    __attribute__((format(printf, 1, 2)));
+
+/**
  * @brief Pregunta al usuario con una pregunta de sí/no.
  *
  * @param mensaje El mensaje para mostrar al usuario.
