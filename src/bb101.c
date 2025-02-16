@@ -11,8 +11,6 @@
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wformat-security"
 
-typedef char *string;
-
 /**
  * Número de cadenas asignadas por obtener_texto.
  */
