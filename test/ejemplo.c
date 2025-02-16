@@ -4,10 +4,6 @@
 
 int main()
 {
-    bool hola = preguntar_si_no("Dame un texto %d: ",1);
-    if(hola){
-	printf("%s", "SI");
-    }else {
-	printf("%s", "NO");
-    }
+    int hola = obtener_entero("Dame un texto %d: ",1);
+    printf("El entero es: %d\n", hola);
 }

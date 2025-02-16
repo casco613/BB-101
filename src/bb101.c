@@ -27,9 +27,11 @@ static size_t numero_asignaciones = 0;
 static string *strings_generados = NULL;
 
 #undef obtener_texto
-string obtener_texto(va_list *argumentos, const string mensaje, ...) {
+string obtener_texto(va_list *argumentos, const string mensaje, ...)
+{
   // Verificar que no se exceda el número máximo de asignaciones.
-  if (numero_asignaciones == SIZE_MAX / sizeof(string)) {
+  if (numero_asignaciones == SIZE_MAX / sizeof(string))
+  {
     return NULL;
   }
 
@@ -39,11 +41,15 @@ string obtener_texto(va_list *argumentos, const string mensaje, ...) {
   int caracter_actual;
 
   // Mostrar mensaje si se proporciona.
-  if (mensaje != NULL) {
+  if (mensaje != NULL)
+  {
     va_list lista_argumentos;
-    if (argumentos == NULL) {
+    if (argumentos == NULL)
+    {
       va_start(lista_argumentos, mensaje);
-    } else {
+    }
+    else
+    {
       va_copy(lista_argumentos, *argumentos);
     }
     vprintf(mensaje, lista_argumentos);
@@ -52,18 +58,22 @@ string obtener_texto(va_list *argumentos, const string mensaje, ...) {
 
   // Leer caracteres de la entrada hasta fin de línea o EOF.
   while ((caracter_actual = fgetc(stdin)) != EOF && caracter_actual != '\n' &&
-         caracter_actual != '\r') {
+         caracter_actual != '\r')
+  {
 
     // Asegurar espacio para el nuevo carácter y el terminador nulo.
-    if (tamano + 1 >= capacidad) {
+    if (tamano + 1 >= capacidad)
+    {
       size_t nueva_capacidad = (capacidad == 0) ? 16 : capacidad * 2;
       // Comprobar posible desbordamiento.
-      if (nueva_capacidad <= capacidad) {
+      if (nueva_capacidad <= capacidad)
+      {
         free(buffer);
         return NULL;
       }
       string temp = realloc(buffer, nueva_capacidad * sizeof(char));
-      if (temp == NULL) {
+      if (temp == NULL)
+      {
         free(buffer);
         return NULL;
       }
@@ -74,16 +84,20 @@ string obtener_texto(va_list *argumentos, const string mensaje, ...) {
   }
 
   // Si no se leyó nada y se alcanzó EOF, liberar memoria y retornar NULL.
-  if (tamano == 0 && caracter_actual == EOF) {
+  if (tamano == 0 && caracter_actual == EOF)
+  {
     free(buffer);
     return NULL;
   }
 
   // Si se leyó '\r', verificar si le sigue '\n' (para Windows).
-  if (caracter_actual == '\r') {
+  if (caracter_actual == '\r')
+  {
     caracter_actual = fgetc(stdin);
-    if (caracter_actual != '\n' && caracter_actual != EOF) {
-      if (ungetc(caracter_actual, stdin) == EOF) {
+    if (caracter_actual != '\n' && caracter_actual != EOF)
+    {
+      if (ungetc(caracter_actual, stdin) == EOF)
+      {
         free(buffer);
         return NULL;
       }
@@ -92,7 +106,8 @@ string obtener_texto(va_list *argumentos, const string mensaje, ...) {
 
   // Ajustar el buffer al tamaño exacto y añadir el terminador nulo.
   string string_capturado = realloc(buffer, (tamano + 1) * sizeof(char));
-  if (string_capturado == NULL) {
+  if (string_capturado == NULL)
+  {
     free(buffer);
     return NULL;
   }
@@ -101,7 +116,8 @@ string obtener_texto(va_list *argumentos, const string mensaje, ...) {
   // Almacenar la cadena generada en el arreglo global.
   string *tmp =
       realloc(strings_generados, (numero_asignaciones + 1) * sizeof(string));
-  if (tmp == NULL) {
+  if (tmp == NULL)
+  {
     free(string_capturado);
     return NULL;
   }
@@ -112,21 +128,27 @@ string obtener_texto(va_list *argumentos, const string mensaje, ...) {
 }
 
 #undef obtener_caracter
-char obtener_caracter(va_list *argumentos, const string mensaje, ...) {
+char obtener_caracter(va_list *argumentos, const string mensaje, ...)
+{
   va_list lista_argumentos;
-  if (argumentos == NULL) {
+  if (argumentos == NULL)
+  {
     va_start(lista_argumentos, mensaje);
-  } else {
+  }
+  else
+  {
     va_copy(lista_argumentos, *argumentos);
   }
 
   char resultado;
 
-  while (true) {
+  while (true)
+  {
     // Se obtiene una línea de texto, utilizando la función que se encarga de
     // gestionar la entrada y el mensaje (y sus argumentos variables).
     string linea = obtener_texto(&lista_argumentos, mensaje);
-    if (linea == NULL) {
+    if (linea == NULL)
+    {
       // Si no se pudo leer la línea, se retorna CHAR_MAX para indicar fallo.
       resultado = CHAR_MAX;
       break;
@@ -135,7 +157,8 @@ char obtener_caracter(va_list *argumentos, const string mensaje, ...) {
     // Se intenta extraer exactamente un carácter de la línea.
     // El espacio en el formato " %c %c" descarta los espacios en blanco.
     char primer, extra;
-    if (sscanf(linea, " %c %c", &primer, &extra) == 1) {
+    if (sscanf(linea, " %c %c", &primer, &extra) == 1)
+    {
       resultado = primer;
       break;
     }
@@ -147,11 +170,13 @@ char obtener_caracter(va_list *argumentos, const string mensaje, ...) {
   return resultado;
 }
 
-bool preguntar_si_no(const string mensaje, ...) {
+bool preguntar_si_no(const string mensaje, ...)
+{
   va_list lista_argumentos;
   va_start(lista_argumentos, mensaje);
   bool respuesta;
-  while (true) {
+  while (true)
+  {
     char caracter = obtener_caracter(&lista_argumentos, mensaje);
 
     if (caracter == 's' || caracter == 'S')
@@ -164,10 +189,57 @@ bool preguntar_si_no(const string mensaje, ...) {
   return respuesta;
 }
 
+#undef obtener_entero
+int obtener_entero(va_list *argumentos, const string mensaje, ...)
+{
 
-static void desmantelamiento(void) {
-  if (strings_generados != NULL) {
-    for (size_t i = 0; i < numero_asignaciones; i++) {
+  va_list lista_argumentos;
+  if (argumentos == NULL)
+  {
+    va_start(lista_argumentos, mensaje);
+  }
+  else
+  {
+    va_copy(lista_argumentos, *argumentos);
+  }
+
+  int resultado;
+
+  while (true)
+  {
+    // Se obtiene una línea de texto, utilizando la función que se encarga de
+    // gestionar la entrada y el mensaje (y sus argumentos variables).
+    string linea = obtener_texto(&lista_argumentos, mensaje);
+    if (linea == NULL)
+    {
+      // Si no se pudo leer la línea, se retorna INT_MAX para indicar fallo.
+      resultado = INT_MAX;
+      break;
+    }
+
+    // Se intenta extraer exactamente un entero de la línea.
+    // El espacio en el formato " %d %c" descarta los espacios en blanco.
+    int primer;
+    char extra;
+    if (sscanf(linea, " %d %c", &primer, &extra) == 1)
+    {
+      resultado = primer;
+      break;
+    }
+    // Si no se obtuvo exactamente un entero, se repite el ciclo para volver a
+    // pedir el ingreso al usuario.
+  }
+
+  va_end(lista_argumentos);
+  return resultado;
+}
+
+static void desmantelamiento(void)
+{
+  if (strings_generados != NULL)
+  {
+    for (size_t i = 0; i < numero_asignaciones; i++)
+    {
       free(strings_generados[i]);
     }
     free(strings_generados);
@@ -175,7 +247,8 @@ static void desmantelamiento(void) {
 }
 
 // Función de inicialización.
-int INITIALIZER(int setup) {
+int INITIALIZER(int setup)
+{
   setvbuf(stdout, NULL, _IONBF, 0);
   atexit(desmantelamiento);
   return 0;
