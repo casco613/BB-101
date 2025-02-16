@@ -11,6 +11,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wformat-security"
+
 typedef char *string;
 
 /**
@@ -160,6 +163,7 @@ bool preguntar_si_no(const string mensaje, ...) {
   va_end(lista_argumentos);
   return respuesta;
 }
+
 
 static void desmantelamiento(void) {
   if (strings_generados != NULL) {
