@@ -8,10 +8,16 @@
 
 typedef char *string;
 
-string obtener_texto(const string msg);
-int obtener_entero(const string msg);
-char obtener_caracter(const string msg);
-float obtener_decimal(const string msg);
-double obtener_decimal_grande(const string msg);
+int obtener_entero(const string mensaje);
+int obtener_entero_positivo(const string mensaje);
+char obtener_caracter(const string mensaje);
+float obtener_decimal(const string mensaje);
+double obtener_decimal_grande(const string mensaje);
+
+bool preguntar_si_no(const string mensaje);
+
+string obtener_texto(va_list *argumentos, const string mensaje, ...)
+    __attribute__((format(printf, 2, 3)));
+#define obtener_texto(...) obtener_texto(NULL, __VA_ARGS__)
 
 #endif
