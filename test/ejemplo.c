@@ -4,6 +4,6 @@
 
 int main()
 {
-    float hola = obtener_decimal("Dame un texto %d: ",1);
+    double hola = obtener_decimal_grande("Dame un texto %d: ",1);
     printf("El numero es: %f\n", hola);
 }

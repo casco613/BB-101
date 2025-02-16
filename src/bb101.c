@@ -287,6 +287,41 @@ float obtener_decimal(const string mensaje, ...)
   return resultado;
 }
 
+double obtener_decimal_grande(const string mensaje, ...)
+{
+  va_list lista_argumentos;
+  va_start(lista_argumentos, mensaje);
+  double resultado;
+  while (true)
+  {
+    // Se obtiene una línea de texto, utilizando la función que se encarga de
+    // gestionar la entrada y el mensaje (y sus argumentos variables).
+    string linea = obtener_texto(&lista_argumentos, mensaje);
+    if (linea == NULL)
+    {
+      // Si no se pudo leer la línea, se retorna DBL_MAX para indicar fallo.
+      resultado = DBL_MAX;
+      break;
+    }
+
+    // Se intenta extraer exactamente un número de punto flotante de doble
+    // precisión de la línea. El espacio en el formato " %lf %c" descarta los
+    // espacios en blanco.
+    double primer;
+    char extra;
+    if (sscanf(linea, " %lf %c", &primer, &extra) == 1)
+    {
+      resultado = primer;
+      break;
+    }
+    // Si no se obtuvo exactamente un número de punto flotante de doble
+    // precisión, se repite el ciclo para volver a pedir el ingreso al usuario.
+  }
+
+  va_end(lista_argumentos);
+  return resultado;
+}
+
 static void desmantelamiento(void)
 {
   if (strings_generados != NULL)
@@ -300,7 +335,7 @@ static void desmantelamiento(void)
 }
 
 // Función de inicialización.
-int INITIALIZER(int setup)
+int INITIALIZER()
 {
   setvbuf(stdout, NULL, _IONBF, 0);
   atexit(desmantelamiento);
