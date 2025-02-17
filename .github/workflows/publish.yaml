@@ -1,0 +1,177 @@
+name: Build and release
+
+on:
+  release:
+    types:
+      - released
+
+jobs:
+  build-data:
+    permissions:
+      contents: write
+    name: Generate build data
+    runs-on: ubuntu-latest
+    outputs:
+      build_date: ${{ steps.data.outputs.builddate }}
+      version: ${{ steps.data.outputs.version }}
+      build_time: ${{ steps.data.outputs.buildtime }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Export release date
+        id: data
+        shell: bash
+        run: |
+          echo "builddate=$(date +"%Y-%m-%d")" >> $GITHUB_OUTPUT
+          echo "version=$(git describe --tags --abbrev=0)" >> $GITHUB_OUTPUT
+
+  linux:
+    name: Linux build
+    runs-on: ubuntu-latest
+    permissions: write-all
+    needs: [build-data]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build static library
+        run: make static
+
+      - name: Build dynamic library
+        run: make dynamic
+
+      - name: Create tar.gz file
+        run: |
+          tar -czf releases/bb101-linux.tar.gz -C lib/ .
+
+      - name: Create tar.bz2 file
+        run: |
+          tar -cjf releases/bb101-linux.tar.bz2 -C lib/ .
+
+      - name: Upload bb101-linux.tar.gz
+        uses: actions/upload-artifact@v4
+        with:
+          retention-days: 5
+          name: bb101-linux.tar.gz
+          path: releases/bb101-linux.tar.gz
+
+      - name: Upload bb101-linux.tar.bz2
+        uses: actions/upload-artifact@v4
+        with:
+          retention-days: 5
+          name: bb101-linux.tar.bz2
+          path: releases/bb101-linux.tar.bz2
+
+      - name: Clean
+        run: make clean
+
+  mac:
+    name: MacOs build
+    runs-on: macos-latest
+    permissions: write-all
+    needs: [build-data]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build static library
+        run: make static
+
+      - name: Build dynamic library
+        run: make dynamic
+
+      - name: Create tar.gz file
+        run: |
+          tar -czf releases/bb101-mac.tar.gz -C lib/ .
+
+      - name: Create tar.bz2 file
+        run: |
+          tar -cjf releases/bb101-mac.tar.bz2 -C lib/ .
+
+      - name: Upload bb101-mac.tar.gz
+        uses: actions/upload-artifact@v4
+        with:
+          retention-days: 5
+          name: bb101-mac.tar.gz
+          path: releases/bb101-mac.tar.gz
+
+      - name: Upload bb101-mac.tar.bz2
+        uses: actions/upload-artifact@v4
+        with:
+          retention-days: 5
+          name: bb101-mac.tar.bz2
+          path: releases/bb101-mac.tar.bz2
+
+      - name: Clean
+        run: make clean
+
+  windows:
+    runs-on: windows-latest
+    name: Windows build
+    permissions: write-all
+    needs: [build-data]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Chocolatey
+        shell: pwsh
+        run: |
+          Set-ExecutionPolicy Bypass -Scope Process -Force; 
+          iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+
+      - name: Install make using Chocolatey
+        shell: pwsh
+        run: choco install make
+
+      - name: Verify make installation
+        shell: pwsh
+        run: make --version
+
+      - name: Build static library
+        run: make static
+
+      - name: Build dynamic library
+        run: make dynamic
+
+      - name: Create zip file
+        shell: pwsh
+        run: |
+          Compress-Archive -Path 'lib\*' -DestinationPath 'releases\bb101-win.zip'
+
+      - name: Upload bb101-win.zip
+        uses: actions/upload-artifact@v4
+        with:
+          retention-days: 5
+          name: bb101-win.zip
+          path: releases/bb101-win.zip
+
+      - name: Clean
+        run: make clean
+
+  release:
+    name: release
+    permissions: write-all
+    runs-on: ubuntu-latest
+    needs: [linux, mac, windows, build-data]
+
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+
+      - name: Release
+        uses: marvinpinto/action-automatic-releases@master
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: "latest"
+          prerelease: false
+          title: "Release build - ${{ needs.build-data.outputs.version }} (${{ needs.build-data.outputs.build_date }})"
+          files: |
+            bb101-mac.tar.bz2
+            bb101-mac.tar.gz
+            bb101-linux.tar.bz2
+            bb101-linux.tar.gz
+            bb101-win.zip
