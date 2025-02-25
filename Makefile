@@ -87,3 +87,5 @@ ifeq ($(OS),Windows_NT)
 else
 	rm -rf $(BUILD_DIR) $(SHARED_LIB) $(LIB_DIR) $(RELEASE_DIR) test_library
 endif
+
+.PHONY: test
