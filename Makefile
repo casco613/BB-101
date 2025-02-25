@@ -50,14 +50,14 @@ $(SHARED_LIB): $(SHARED_OBJ_FILES)
 
 install-headers:
 ifeq ($(OS),Windows_NT)
-	@echo "Headers"
+	copy $(SRC_DIR)\bb101.h "$(USERPROFILE)\scoop\apps\gcc\current\include"
 else
 	install -m 644 $(SRC_DIR)/bb101.h /usr/local/include
 endif
 
-install: clean init static dynamic install-headers
+install: init static dynamic install-headers
 ifeq ($(OS),Windows_NT)
-	copy $(SHARED_LIB) C:\Windows\System32
+	copy $(STATIC_LIB) "$(USERPROFILE)\scoop\apps\gcc\current\lib"
 else
 	install -m 755 $(SHARED_LIB) /usr/local/lib
 	ldconfig
@@ -65,7 +65,8 @@ endif
 
 uninstall:
 ifeq ($(OS),Windows_NT)
-	del C:\Windows\System32\bb101.dll
+	del "$(USERPROFILE)\scoop\apps\gcc\current\include\bb101.h"
+	del "$(USERPROFILE)\scoop\apps\gcc\current\lib\libbb101.a"
 else
 	rm -f /usr/local/lib/libbb101.dylib
 	rm -f /usr/local/lib/libbb101.so
@@ -83,7 +84,10 @@ endif
 
 clean:
 ifeq ($(OS),Windows_NT)
+	rmdir /s /q $(BUILD_DIR)
 	rmdir /s /q $(LIB_DIR)
+	rmdir /s /q $(RELEASE_DIR)
+	del /q test_library.exe 2>nul || exit 0
 else
 	rm -rf $(BUILD_DIR) $(SHARED_LIB) $(LIB_DIR) $(RELEASE_DIR) test_library
 endif

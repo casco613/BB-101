@@ -28,8 +28,9 @@ sí/no, lo que permite una interacción más dinámica con el usuario.
 
 ### En Windows
 
-1. **Instalar Chocolatey**: Si aún no tienes Chocolatey instalado, abre una
-   terminal de PowerShell como administrador y ejecuta el siguiente comando:
+1. **Instalar Chocolatey (Windows)**: Si aún no tienes Chocolatey instalado,
+   abre una terminal de PowerShell como administrador y ejecuta el siguiente
+   comando:
 
    ```powershell
    Set-ExecutionPolicy Bypass -Scope Process -Force;
@@ -38,31 +39,47 @@ sí/no, lo que permite una interacción más dinámica con el usuario.
    System.Net.WebClient).DownloadString('<https://community.chocolatey.org/install.ps1>'))
    ```
 
-2. **Instalar Make**: Una vez que Chocolatey esté instalado, puedes instalar
-   Make ejecutando el siguiente comando en la terminal:
+2. **Instalar Make (Windows)**: Una vez que Chocolatey esté instalado, puedes
+   instalar Make ejecutando el siguiente comando en la terminal:
 
    ```powershell
    choco install make
    ```
 
-3. **Clonar el Repositorio**: Clona el repositorio que contiene la biblioteca
-   BB-101 en tu máquina local.
+3. **Instalar Scoop (Windows)**: Siaun no tienes Scoop instalado, abre una
+   terminal de Powershell y ejecuta el siguiente [comando](https://scoop.sh/):
 
-4. **Compilar la Biblioteca**: Navega al directorio del proyecto en la terminal
-   y ejecuta el siguiente comando para compilar la biblioteca:
-
-   ```bash
-   make
+   ```powershell
+   Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+   Invoke-RestMethod -Uri https://get.scoop.sh | Invoke-Expression
    ```
 
-5. **Instalar la Biblioteca**: Para instalar la biblioteca en el sistema,
-   ejecuta:
+4. **Instalar GCC (Windows)**: Una vez que Scoop esté instalado, puedes instalar
+   GCC ejecutando el siguiente comando en la terminal:
+
+   ```powershell
+   scoop bucket add main
+   scoop install main/gcc
+   ```
+
+5. **Clonar el Repositorio**: Clona el repositorio que contiene la biblioteca
+   BB-101 en tu máquina local.
+
+   ```shell
+   git clone https://github.com/casco613/BB-101
+   ```
+
+   o descargando la fuente codigo y descomprimiendo el codigo fuente del
+   repositorio.
+
+6. **Instalar la Biblioteca**: Para instalar la biblioteca en el sistema,
+   ejecuta en la carpeta `BB-101` tras navegar a ella (`cd BB-101`):
 
    ```bash
    make install
    ```
 
-6. **Desinstalar la Biblioteca**: Si necesitas desinstalar la biblioteca, puedes
+7. **Desinstalar la Biblioteca**: Si necesitas desinstalar la biblioteca, puedes
    hacerlo con:
 
    ```bash
@@ -109,9 +126,10 @@ make test
 
 ## Uso de la librería
 
-Una vez instalada y verificada la librería, se puede importar en los archivos `.c`.
+Una vez instalada y verificada la librería, se puede importar en los archivos
+`.c`.
 
-**saludo.c**
+saludo.c
 
 ```c
 #include <bb101.h>
@@ -124,7 +142,11 @@ int main()
 }
 ```
 
-Para compilar la librería con `gcc`, es necesario especificar el archivo a compilar (en este caso, `saludo.c`), el nombre del ejecutable de salida utilizando el parámetro `-o` (para facilitar la identificación, lo llamaremos `saludo`, que coincide con el nombre del archivo), y vincular con la librería bb101 a través del parámetro -lbb101.
+Para compilar la librería con `gcc`, es necesario especificar el archivo a
+compilar (en este caso, `saludo.c`), el nombre del ejecutable de salida
+utilizando el parámetro `-o` (para facilitar la identificación, lo llamaremos
+`saludo`, que coincide con el nombre del archivo), y vincular con la librería
+bb101 a través del parámetro -lbb101.
 
 ```shell
 gcc saludo.c -o saludo -lbb101
