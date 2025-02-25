@@ -32,21 +32,24 @@ sí/no, lo que permite una interacción más dinámica con el usuario.
    terminal de PowerShell como administrador y ejecuta el siguiente comando:
 
    ```powershell
-    Set-ExecutionPolicy Bypass -Scope Process -Force;
-    [System.Net.ServicePointManager]::SecurityProtocol =
-    [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object
-    System.Net.WebClient).DownloadString('<https://community.chocolatey.org/install.ps1>'))
-    ````
+   Set-ExecutionPolicy Bypass -Scope Process -Force;
+   [System.Net.ServicePointManager]::SecurityProtocol =
+   [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object
+   System.Net.WebClient).DownloadString('<https://community.chocolatey.org/install.ps1>'))
+   ```
 
-2. **Instalar Make**: Una vez que Chocolatey esté instalado, puedes instalar Make ejecutando el siguiente comando en la terminal:
+2. **Instalar Make**: Una vez que Chocolatey esté instalado, puedes instalar
+   Make ejecutando el siguiente comando en la terminal:
 
-    ```powershell
-    choco install make
-    ```
+   ```powershell
+   choco install make
+   ```
 
-3. **Clonar el Repositorio**: Clona el repositorio que contiene la biblioteca BB-101 en tu máquina local.
+3. **Clonar el Repositorio**: Clona el repositorio que contiene la biblioteca
+   BB-101 en tu máquina local.
 
-4. **Compilar la Biblioteca**: Navega al directorio del proyecto en la terminal y ejecuta el siguiente comando para compilar la biblioteca:
+4. **Compilar la Biblioteca**: Navega al directorio del proyecto en la terminal
+   y ejecuta el siguiente comando para compilar la biblioteca:
 
    ```bash
    make
@@ -68,11 +71,15 @@ sí/no, lo que permite una interacción más dinámica con el usuario.
 
 ### En Linux y macOS
 
-1. **Instalar Make**: Asegúrate de tener `make` instalado. En la mayoría de las distribuciones de Linux, puedes instalarlo usando el gestor de paquetes correspondiente (por ejemplo, `apt`, `yum`, `brew` en macOS).
+1. **Instalar Make**: Asegúrate de tener `make` instalado. En la mayoría de las
+   distribuciones de Linux, puedes instalarlo usando el gestor de paquetes
+   correspondiente (por ejemplo, `apt`, `yum`, `brew` en macOS).
 
-2. **Clonar el Repositorio**: Clona el repositorio que contiene la biblioteca BB-101 en tu máquina local.
+2. **Clonar el Repositorio**: Clona el repositorio que contiene la biblioteca
+   BB-101 en tu máquina local.
 
-3. **Compilar la Biblioteca**: Navega al directorio del proyecto en la terminal y ejecuta el siguiente comando para compilar la biblioteca:
+3. **Compilar la Biblioteca**: Navega al directorio del proyecto en la terminal
+   y ejecuta el siguiente comando para compilar la biblioteca:
 
    ```bash
    make
@@ -92,14 +99,41 @@ sí/no, lo que permite una interacción más dinámica con el usuario.
    make uninstall
    ```
 
-## Pruebas
-
 Para probar la biblioteca, puedes ejecutar la tarea `test`, que compila y
 ejecuta un programa de ejemplo utilizando la biblioteca dinámica global. Para
 hacerlo, simplemente ejecuta:
 
 ```bash
 make test
+```
+
+## Uso de la librería
+
+Una vez instalada y verificada la librería, se puede importar en los archivos `.c`.
+
+**saludo.c**
+
+```c
+#include <bb101.h>
+#include <stdio.h>
+
+int main()
+{
+    string nombre = obtener_texto("Hola, ¿cuál es tu nombre?");
+    printf("%s\n", nombre);
+}
+```
+
+Para compilar la librería con `gcc`, es necesario especificar el archivo a compilar (en este caso, `saludo.c`), el nombre del ejecutable de salida utilizando el parámetro `-o` (para facilitar la identificación, lo llamaremos `saludo`, que coincide con el nombre del archivo), y vincular con la librería bb101 a través del parámetro -lbb101.
+
+```shell
+gcc saludo.c -o saludo -lbb101
+```
+
+Esto generará un ejecutable que se puede ejecutar de la siguiente manera:
+
+```shell
+./saludo
 ```
 
 ## Limpieza

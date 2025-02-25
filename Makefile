@@ -72,6 +72,15 @@ else
 	rm -f /usr/local/include/bb101.h
 endif
 
+test:
+ifeq ($(OS),Windows_NT)
+	$(CC) $(CFLAGS) $(TEST_DIR)/ejemplo.c -lbb101 -o test_library
+	.\test_library.exe
+else
+	$(CC) $(CFLAGS) $(TEST_DIR)/ejemplo.c -lbb101 -o test_library
+	./test_library
+endif
+
 clean:
 ifeq ($(OS),Windows_NT)
 	rmdir /s /q $(LIB_DIR)
