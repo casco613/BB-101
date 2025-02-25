@@ -67,6 +67,7 @@ uninstall:
 ifeq ($(OS),Windows_NT)
 	del "$(USERPROFILE)\scoop\apps\gcc\current\include\bb101.h"
 	del "$(USERPROFILE)\scoop\apps\gcc\current\lib\libbb101.a"
+	del "$(USERPROFILE)\scoop\apps\gcc\current\lib\libbb101.dll"
 else
 	rm -f /usr/local/lib/libbb101.dylib
 	rm -f /usr/local/lib/libbb101.so
