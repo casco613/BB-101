@@ -4,7 +4,7 @@
     "features": {
         "ghcr.io/devcontainers/features/git:1": {}
     },
-    "postCreateCommand": "git clone https://github.com/casco613/BB-101.git && cd BB-101 && make install && cd .. && rm -rf BB-101",
+    "postCreateCommand": "git clone https://github.com/casco613/BB-101.git && cd BB-101 && make install && cd .. && rm -rf BB-101 && rm -rf .git && rm -rf * && rm -rf .devcontainer",
     "customizations": {
         "vscode": {
             "extensions": [
