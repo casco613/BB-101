@@ -1,0 +1,17 @@
+{
+    "name": "BB-101 Development Environment",
+    "image": "mcr.microsoft.com/devcontainers/cpp:debian",
+    "features": {
+        "ghcr.io/devcontainers/features/git:1": {}
+    },
+    "postCreateCommand": "git clone https://github.com/casco613/BB-101.git && cd BB-101 && make install && cd .. && rm -rf BB-101",
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-vscode.cpptools",
+                "ms-vscode.cmake-tools"
+            ]
+        }
+    },
+    "remoteUser": "root"
+} 
